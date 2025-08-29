@@ -1,56 +1,55 @@
-function availablePositions(position) {
-  let x = position[0];
-  let y = position[1];
-
-  let array = [
-    [x + 2, y + 1],
-    [x + 2, y - 1],
-    [x - 2, y + 1],
-    [x - 2, y - 1],
-    [x + 1, y + 2],
-    [x + 1, y - 2],
-    [x - 1, y + 2],
-    [x - 1, y - 2],
+function KnightMoves(start, end) {
+  let directions = [
+    [2, 1],
+    [1, 2],
+    [-1, 2],
+    [-2, 1],
+    [-2, -1],
+    [-1, -2],
+    [1, -2],
+    [2, -1],
   ];
+  let queue = [[start, [start]]];
 
-  let filtered = array.filter(
-    (p) => p[0] >= 0 && p[1] >= 0 && p[0] < 8 && p[1] < 8
-  );
-  console.log(filtered);
-
-  return filtered;
-}
-
-function knightMoves(start, end) {
-  if (start === end) return null;
-
-  let visited = [start.toString()];
-
-  let queue = availablePositions(start);
-
-  let moves = 0;
-
-  if (queue.some((a) => end.every((v, i) => v === a[i]))) {
-    console.log("You made it in only 1 move!");
-    return;
-  }
+  const visited = Array.from({ length: 8 }, () => Array(8).fill(false));
+  visited[start[0]][start[1]] = true;
 
   while (queue.length > 0) {
-    let oneMove = queue.length;
+    let currPos = queue.shift();
 
-    for (let i = 0; i < oneMove; i++) {
-      let current = queue.shift();
-      if (current === end) {
-        console.log(moves);
-        return moves;
-      }
-      let nextMoves = availablePositions(current);
-      nextMoves = nextMoves.filter((el) => !visited.includes(el));
-
-      queue.push(nextMoves);
+    if (arraysEqual(currPos[0], end)) {
+      return currPos[1];
     }
-    moves += 1;
+
+    for (let i = 0; i < 8; i++) {
+      let currX = currPos[0][0];
+      let currY = currPos[0][1];
+
+      let newX = currX + directions[i][0];
+      let newY = currY + directions[i][1];
+
+      if (isValid([newX, newY]) && !visited[newX][newY]) {
+        visited[newX][newY] = true;
+        let newMoveCord = [newX, newY];
+
+        let newPath = [...currPos[1]];
+        newPath.push(newMoveCord);
+
+        let newMove = [newMoveCord, newPath];
+        queue.push(newMove);
+      }
+    }
   }
 }
 
-knightMoves([1, 1], [3, 2]);
+function arraysEqual(a, b) {
+  return a.length === b.length && a.every((val, i) => val === b[i]);
+}
+
+function isValid([x, y]) {
+  return x >= 0 && x < 8 && y >= 0 && y < 8;
+}
+
+let testPath = KnightMoves([0, 0], [7, 7]);
+
+testPath.forEach((e) => console.log(e));
