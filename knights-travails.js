@@ -21,86 +21,36 @@ function availablePositions(position) {
   return filtered;
 }
 
-availablePositions([1, 1]);
-
 function knightMoves(start, end) {
-  // let startX = start[0];
-  // let startY = start[1];
-  // let end = end;
+  if (start === end) return null;
 
-  //choose a data structure
+  let visited = [start.toString()];
 
-  //decide with search algorithm
+  let queue = availablePositions(start);
 
-  //start with [0,0] to [2,1]
+  let moves = 0;
 
-  //use BFS
-  //use a queue to keep track of the next positions to explore
-  let queue = [];
-
-  //track visited positions to avoid loops or unnecessary repeats
-  let visitedPositions = [];
-}
-
-function levelOrderForEach(root, callback) {
-  if (typeof callback !== "function") {
-    throw new Error("Function parameter is not a callback function!");
+  if (queue.some((a) => end.every((v, i) => v === a[i]))) {
+    console.log("You made it in only 1 move!");
+    return;
   }
 
-  if (root === null) return;
-
-  let queue = [root];
-
   while (queue.length > 0) {
-    callback(queue[0].data);
-    if (queue[0].left) queue.push(queue[0].left);
-    if (queue[0].right) queue.push(queue[0].right);
-    queue.shift();
-  }
-}
+    let oneMove = queue.length;
 
-function height(root, value) {
-  let node = find(root, value);
-  console.log(node);
-  if (!node) return null;
-
-  let queue = [node];
-  let height = -1;
-
-  while (queue.length > 0) {
-    let levelSize = queue.length;
-
-    for (let i = 0; i < levelSize; i++) {
-      let curr = queue.shift();
-      if (curr.left) queue.push(curr.left);
-      if (curr.right) queue.push(curr.right);
-    }
-    height++;
-  }
-  console.log(height);
-  return height;
-}
-
-function depth(root, value) {
-  if (root === null) return;
-
-  let curr = root;
-  let queue = [curr];
-  let depth = 0;
-
-  while (queue.length > 0) {
-    let levelSize = queue.length;
-
-    for (let i = 0; i < levelSize; i++) {
-      curr = queue.shift();
-      if (curr.data === value) {
-        console.log(depth);
-        return depth;
+    for (let i = 0; i < oneMove; i++) {
+      let current = queue.shift();
+      if (current === end) {
+        console.log(moves);
+        return moves;
       }
-      if (curr.left) queue.push(curr.left);
-      if (curr.right) queue.push(curr.right);
+      let nextMoves = availablePositions(current);
+      nextMoves = nextMoves.filter((el) => !visited.includes(el));
+
+      queue.push(nextMoves);
     }
-    depth++;
+    moves += 1;
   }
-  return false;
 }
+
+knightMoves([1, 1], [3, 2]);
